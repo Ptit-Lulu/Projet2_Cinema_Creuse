@@ -12,30 +12,28 @@ from sklearn.model_selection import train_test_split
 import base64
 
 
-# Lire l'image locale et encoder en base64
+# --- LIRE ET ENCODER L'IMAGE DE FOND ---
 with open("Fond_ecran_app_cinema.png", "rb") as f:
     img_bytes = f.read()
 encoded = base64.b64encode(img_bytes).decode()
 
+
+# --- APPLIQUER L'IMAGE DE FOND AVEC UN FILTRE BLANC SEMI-TRANSPARENT ---
 st.markdown(f"""
 <style>
-.stApp::before {{
-    content:"";
-    position: fixed;
-    inset: 0;
-    background: url("data:image/png;base64,{encoded}") no-repeat center center;
+
+[data-testid="stAppViewContainer"] {{
+    background:
+        linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)),
+        url("data:image/png;base64,{encoded}");
     background-size: cover;
-    opacity: 0.4;       /* ajuste la transparence de l'image */
-    pointer-events: none;
-    z-index: 0;
+    background-position: center;
+    background-repeat: no-repeat;
 }}
 
-.stApp > div {{
-    position: relative;
-    z-index: 1;
-}}
 </style>
 """, unsafe_allow_html=True)
+
 
 
 #--- PERSONALISATION DE LA SIDEBAR---

@@ -34,7 +34,7 @@ st.markdown("""
 
 
 # --- LIRE ET ENCODER L'IMAGE DE FOND ---
-with open("Fond_ecran_app_cinema.png", "rb") as f:
+with open("photo_eden_noir_blanc.png", "rb") as f:
     img_bytes = f.read()
 encoded = base64.b64encode(img_bytes).decode()
 
@@ -56,7 +56,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 
-# --- 1er bloc avec titre ---#FFD700
+# --- 1er bloc avec titre ---
 st.markdown("""
 <div style="
     padding: 50px;

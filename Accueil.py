@@ -17,20 +17,36 @@ import base64
 
 
 #--- CONFIGURATION DE LA PAGE --- 
+
+
+
 st.set_page_config(
     page_title="Cinéma EDEN",
     layout="wide",  
     initial_sidebar_state="expanded"
+    
 )
-#--- PERSONALISATION DE LA SIDEBAR---
-st.markdown("""
+custom_toggle = """
 <style>
-[data-testid="stSidebar"] * {
-    font-family: 'Playfair Display', serif;   /* Police */
-    font-size: 20px;                           /* Taille du texte */
+
+/* Cible n'importe quel bouton contenant un SVG (le toggle fait partie de ceux-là) */
+header button svg {
+    display: none !important;
 }
+
+/* Ajoute ton icône avant le bouton toggle */
+header button::before {
+    content: "☰" !important;
+    font-size: 26px !important;
+    color: #000000 !important;
+    position: relative;
+    top: 2px;
+}
+
 </style>
-""", unsafe_allow_html=True)
+"""
+
+st.markdown(custom_toggle, unsafe_allow_html=True)
 
 
 # --- LIRE ET ENCODER L'IMAGE DE FOND ---

@@ -15,13 +15,16 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import base64
 
+df_final = pd.read_csv("df_final_art_acteur.csv", sep =";")
 
 #--- CONFIGURATION DE LA PAGE --- 
 st.set_page_config(
     page_title="Cinéma EDEN",
-    layout="wide",  
-    initial_sidebar_state="expanded"
+    layout="wide",
+    initial_sidebar_state="auto",
+
 )
+
 #--- PERSONALISATION DE LA SIDEBAR---
 st.markdown("""
 <style>

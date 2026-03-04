@@ -25,6 +25,24 @@ st.set_page_config(
 
 )
 
+custom_toggle = """
+<style>
+header button svg {
+    display: none !important;
+}
+header button::before {
+    content: "☰" !important;
+    font-size: 26px !important;
+    color: #000000 !important;
+    position: relative;
+    top: 2px;
+}
+</style>
+"""
+st.markdown(custom_toggle, unsafe_allow_html=True)
+
+
+
 #--- PERSONALISATION DE LA SIDEBAR---
 st.markdown("""
 <style>

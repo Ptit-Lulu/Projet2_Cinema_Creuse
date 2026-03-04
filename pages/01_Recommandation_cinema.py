@@ -25,6 +25,9 @@ with open("Fond_ecran_app_cinema.png", "rb") as f:
     img_bytes = f.read()
 encoded = base64.b64encode(img_bytes).decode()
 
+#**********************************************
+#--- MISE EN PAGE---
+#**********************************************
 
 # --- APPLIQUER L'IMAGE DE FOND AVEC UN FILTRE BLANC SEMI-TRANSPARENT ---
 st.markdown(f"""
@@ -49,7 +52,13 @@ st.set_page_config(
 
 )
 
-#--- PERSONALISATION DE LA SIDEBAR---
+
+
+#__________________________________________________________________________________________________
+
+#**********************************************
+#--- SIDEBAR---
+#**********************************************
 st.markdown("""
 <style>
 [data-testid="stSidebar"] * {
@@ -98,24 +107,70 @@ if titre_choisi is not None:
 
     film_filtre = df_final[df_final["title"] == titre_choisi]
 
-    if not film_filtre.empty and film_filtre["poster_path"].notna().iloc[0]:
+# Récupérer la valeur poster_path
+    poster_path = film_filtre["poster_path"].iloc[0]
 
-        base_url = "https://image.tmdb.org/t/p/w500"
-        poster_path = film_filtre["poster_path"].iloc[0]
-        poster_url = base_url + poster_path
+    # Vérifier si l'image est valide
+    if not film_filtre.empty and poster_path and poster_path not in ["", "None", 0]:
+        st.sidebar.image(poster_path, width=300)
+        st.sidebar.caption(f"Réalisateur : {film_filtre['primaryName'].iloc[0]} ({film_filtre['startYear'].iloc[0]})", text_alignment="center")
+        if st.sidebar.button("Voir les recommandations pour ce film", key="btn_reco", width=300,):
+            st.session_state.selected_film = film_filtre.iloc[0]
 
-        st.sidebar.image(poster_url)
-        st.caption(f"Réalisateur : {df_final['primaryName']} ({df_final['startYear']})", width=200, text_alignment="center")
+#__________________________________________________________________________________________________
 
-    else:
-        st.sidebar.image("Image_non_disponible.jpg")
+#**********************************************
+#--- PAGE PRINCIPAL RECHERCHE FILM---
+#**********************************************
 
+# --- MISE EN PAGES DES FILTRES --- 
 
+#---------Bloc réalisateur ---------#
+st.divider()
 
-#--- PAGE RECHERCHE FILM---
+with st.container():
+    st.markdown("""
+        <span style="
+            font-weight:bold;
+            font-family: 'Playfair Display', serif;
+            font-size: 22px
+        ">
+        Sélectionnez le réalisateur que vous aimez :
+        </span>
+        """, unsafe_allow_html=True)
+# Filtre par réalisateur
+realisateurs = df_final['primaryName'].dropna().unique()
+realisateur_choisi = st.selectbox(
+    " ",
+      ["Tous"] + list(realisateurs)
+)
+
 
 st.divider()
 
+#---------Bloc Acteur principal ---------#
+
+with st.container():
+        st.markdown("""
+        <span style="
+            font-weight:bold;
+            font-family: 'Playfair Display', serif;
+            font-size: 22px
+        ">
+        Sélectionnez l'acteur principal que vous aimez :
+        </span>
+        """, unsafe_allow_html=True)
+
+# Filtre par réalisateur
+acteur = df_final['acteur_principal_'].dropna().unique()
+acteur_choisi = st.selectbox(
+    " ",
+      ["Tous"] + list(acteur)
+)
+
+st.divider()
+
+#---------Bloc Genre ---------#
 with st.container():
     st.markdown("""
         <span style="
@@ -127,29 +182,27 @@ with st.container():
         </span>
         """, unsafe_allow_html=True)
 
-     
+# Filtre par genre
+col1, col2, col3, col4 = st.columns(4,vertical_alignment="center")
 
-
-    col1, col2, col3, col4 = st.columns(4,vertical_alignment="center", border=True)
-
-    with col1:
+with col1:
         Action = st.checkbox("Action")
         Aventure = st.checkbox("Aventure")
         Animation = st.checkbox("Animation")
         Comédie = st.checkbox("Comédie")
-    with col2:
+with col2:
         Crime = st.checkbox("Crime")
         Documentaire = st.checkbox("Documentaire")
         Drame = st.checkbox("Drame")
         Famille = st.checkbox("Famille")
 
-    with col3:
+with col3:
         Fantastique = st.checkbox("Fantastique")
         Histoire = st.checkbox("Histoire")
         Guerre = st.checkbox("Guerre")
         Musique = st.checkbox("Musique")
     
-    with col4:
+with col4:
         Romance = st.checkbox("Romance")
         Science_Fiction = st.checkbox("Science-Fiction") 
         Thriller = st.checkbox("Thriller")
@@ -158,6 +211,9 @@ with st.container():
 
 st.divider()
 
+#---------Bloc année de sortie ---------#
+
+# Filtre par année de sortie
 with st.container():
     st.markdown("""
         <span style="
@@ -174,64 +230,71 @@ date_range = st.slider(
     "",
     min_value=int(df_final["startYear"].min()),
     max_value=int(df_final["startYear"].max()),
-    value=(int(df_final["startYear"].min()), int(df_final["startYear"].max())))
+    value=(int(1980), int(1990)))
+
+#__________________________________________________________________________________________________
+
+#**********************************************
+#--- PAGE PRINCIPAL RECHERCHE FILM---
+#**********************************************
 
 # Initialisation de l'état
 if "selected_film" not in st.session_state:
     st.session_state.selected_film = None
 
 
-# Filtrer les films par année (et éventuellement genres)
+# Filtrer les films par année de sortie
 df_filtre = df_final[
     (df_final["startYear"] >= date_range[0]) &
     (df_final["startYear"] <= date_range[1])
 ]
 
+# Filtre par réalisateur
 
-# Ajouter ici le filtrage par genre si besoin
-# Liste des genres cochés
+if realisateur_choisi != "Tous":
+    df_filtre = df_filtre[df_filtre["primaryName"] == realisateur_choisi]
+
+
+# Filtre par acteur principal
+if acteur_choisi != "Tous":
+    df_filtre = df_filtre[df_filtre["acteur_principal_"] == acteur_choisi]
+
+
+# Filtre par genres cochés
 genres_choisis = []
 if Action:
     genres_choisis.append("Action")
 if Aventure:
-    genres_choisis.append("Aventure")
+    genres_choisis.append("Adventure")
 if Animation:
     genres_choisis.append("Animation")
 if Comédie:
-    genres_choisis.append("Comédie")
+    genres_choisis.append("Comedy")
 if Crime:
     genres_choisis.append("Crime")
 if Documentaire:
-    genres_choisis.append("Documentaire")
+    genres_choisis.append("Documentary")
 if Drame:
-    genres_choisis.append("Drame")
+    genres_choisis.append("Drama")
 if Famille:
-    genres_choisis.append("Famille")
+    genres_choisis.append("Family")
 if Fantastique:
-    genres_choisis.append("Fantastique")
+    genres_choisis.append("Fantasy")
 if Histoire:
-    genres_choisis.append("Histoire")
+    genres_choisis.append("History")
 if Guerre:
-    genres_choisis.append("Guerre")
+    genres_choisis.append("War")
 if Musique:
-    genres_choisis.append("Musique")
+    genres_choisis.append("Music")
 if Romance:
     genres_choisis.append("Romance")
 if Science_Fiction:
-    genres_choisis.append("Science-Fiction")
+    genres_choisis.append("Sci-Fi")
 if Thriller:
     genres_choisis.append("Thriller")
 if Western:
     genres_choisis.append("Western")
 
-# --- FILTRAGE PAR GENRES ---
-# Construire la liste des genres cochés
-genres_choisis = []
-if Action:
-    genres_choisis.append("Action")
-if Aventure:
-    genres_choisis.append("Aventure")
-# … répéter pour tous les genres …
 
 # Appliquer le filtre ET logique
 if genres_choisis:
@@ -243,7 +306,9 @@ if genres_choisis:
     ]
 
 
-films = df_filtre.head(20).to_dict(orient="records")  # max 20 films
+# --- AFFICHAGE DES RESULTATS DE LA RECHERCHE---
+
+films = df_filtre.to_dict(orient="records")  # max 20 films
 
 # Page principale : grille de films
 if st.session_state.selected_film is None:
@@ -262,9 +327,7 @@ if st.session_state.selected_film is None:
 
                     poster_path = film.get("poster_path")
                     if poster_path:
-                        st.image("https://image.tmdb.org/t/p/w500" + poster_path, width=200)
-                    else:
-                        st.image("Image_non_disponible.jpg", width=200)
+                        st.image(poster_path, width=200)
                     st.caption(f"Réalisateur : {film['primaryName']} ({film['startYear']})", width=200, text_alignment="center")
 
 # Page détaillée du film
@@ -273,7 +336,7 @@ else:
     st.header(film["title"])
     poster_path = film.get("poster_path")
     if poster_path:
-        st.image("https://image.tmdb.org/t/p/w500" + poster_path, width=300)
+        st.image(poster_path, width=300)
     else:
         st.image("Image_non_disponible.jpg", width=300)
     

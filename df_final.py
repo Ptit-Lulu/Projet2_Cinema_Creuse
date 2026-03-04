@@ -1,5 +1,9 @@
+#%%
 import pandas as pd
 
 df_final = pd.read_csv("df_final_art_acteur.csv", sep =";")
 
 df_final.head()
+
+
+# %%

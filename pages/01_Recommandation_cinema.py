@@ -15,6 +15,25 @@ import plotly.express as px
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+import joblib
+import numpy as np
+
+@st.cache_resource
+def load_all():
+    knn = joblib.load("knn_model.joblib")          # Le modèle NearestNeighbors
+    pipeline = joblib.load("pipeline.joblib")  # Pour transformer les données
+    X_features = joblib.load("X_features.joblib")  # Matrice déjà transformée
+    return knn, pipeline, X_features
+
+knn, pipeline, X_features = load_all()
+
+def recommander_films_par_id(film_id, knn, X_features, df, n=5):
+    vecteur = X_features[film_id].reshape(1, -1)
+    distances, indices = knn.kneighbors(vecteur, n_neighbors=n+1)
+    indices = indices[0][1:]
+
+    resultats = df.iloc[indices][["title", "poster_path", "primaryName", "startYear"]]
+    return resultats.to_dict(orient="records")
 
 
 
@@ -243,20 +262,23 @@ if genres_choisis:
     ]
 
 
-films = df_filtre.head(20).to_dict(orient="records")  # max 20 films
+films = df_filtre
+films = films.reset_index()  # ajoute une colonne "index" avec l'ID réel du film dans df_final
+films_records = films.to_dict(orient="records")
 
 # Page principale : grille de films
 if st.session_state.selected_film is None:
 
-    if not films:
+    if not films_records:
         st.write("Aucun film trouvé pour cette plage d'années.")
     else:
         n_cols = 5
-        for i in range(0, len(films), n_cols):
+        for i in range(0, len(films_records), n_cols):
             cols = st.columns(n_cols)
-            for j, film in enumerate(films[i:i+n_cols]):
+            for j, film in enumerate(films_records[i:i+n_cols]):
                 with cols[j]:
-                    # On transforme l'image en bouton cliquable
+
+                    # bouton cliquable stocke TOUT le film dans session_state
                     if st.button(film["title"], key=f"btn_{i+j}", width=200):
                         st.session_state.selected_film = film
 
@@ -265,6 +287,7 @@ if st.session_state.selected_film is None:
                         st.image("https://image.tmdb.org/t/p/w500" + poster_path, width=200)
                     else:
                         st.image("Image_non_disponible.jpg", width=200)
+
                     st.caption(f"Réalisateur : {film['primaryName']} ({film['startYear']})", width=200, text_alignment="center")
 
 # Page détaillée du film
@@ -276,6 +299,7 @@ else:
         st.image("https://image.tmdb.org/t/p/w500" + poster_path, width=300)
     else:
         st.image("Image_non_disponible.jpg", width=300)
+
     
     # Ici tu peux mettre toutes les infos personnalisées
     st.write("Résumé, acteurs, notes, etc...")

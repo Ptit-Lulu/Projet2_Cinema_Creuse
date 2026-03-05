@@ -11,6 +11,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import base64
 
+st.title
 
 # --- LIRE ET ENCODER L'IMAGE DE FOND ---
 with open("Fond_ecran_app_cinema.png", "rb") as f:

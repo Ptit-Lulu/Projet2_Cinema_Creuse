@@ -20,14 +20,15 @@ from sklearn.model_selection import train_test_split
 
 df_final = pd.read_csv("df_final_art_acteur.csv", sep =";")
 
-# --- LIRE ET ENCODER L'IMAGE DE FOND ---
-with open("Fond_ecran_app_cinema.png", "rb") as f:
-    img_bytes = f.read()
-encoded = base64.b64encode(img_bytes).decode()
 
 #**********************************************
 #--- MISE EN PAGE---
 #**********************************************
+
+# --- LIRE ET ENCODER L'IMAGE DE FOND ---
+with open("Fond_ecran_app_cinema.png", "rb") as f:
+    img_bytes = f.read()
+encoded = base64.b64encode(img_bytes).decode()
 
 # --- APPLIQUER L'IMAGE DE FOND AVEC UN FILTRE BLANC SEMI-TRANSPARENT ---
 st.markdown(f"""
@@ -35,7 +36,7 @@ st.markdown(f"""
 
 [data-testid="stAppViewContainer"] {{
     background:
-        linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)),
+        linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.8)),
         url("data:image/png;base64,{encoded}");
     background-size: cover;
     background-position: center;
@@ -45,12 +46,15 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
+
+
 st.set_page_config(
-    page_title="Cinéma EDEN-Recommandation",
+    page_title="EDEN - Recommandation de films",
     layout="wide",
     initial_sidebar_state="auto",
 
 )
+
 
 
 
@@ -69,28 +73,41 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-st.title("Pas d'idée de film ? ")
+st.markdown("""
+<h1 style="
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 48px;
+    margin-bottom: 20px;
+">
+Pas d'idée de film ?
+</h1>
+""", unsafe_allow_html=True)
 
 st.markdown("""
              <p 
             style="font-size: 25px;
-            font-family: 'Playfair Display', serif;">
-        Nous avons la solution ! Dites nous ce que vous aimez et nous vous recommanderons des films à voir !<br>
+            font-family: 'Playfair Display', serif;"
+            line-height: 1.5;
+            margin-top: 10px;>
+        Dites nous ce que vos clients aiment et nous vous recommanderons des films à programmer !<br>
         </p>
              """, unsafe_allow_html=True)
 
-st.sidebar.markdown("# Recommandation films 🎬")
+st.sidebar.markdown("# Recommandation de films 🎬")
+
+st.sidebar.write("\n")
 
 st.sidebar.markdown("""
              <p 
             style="font-size: 18px; 
             font-family: 'Playfair Display', serif;">
-        Vous connaissez un film que vous avez aimé ? <br>
-                    Nous allons vous recommander des films similaires !
+        Saisissez un film particulièrement apprécié par vos clients, 
+                    nous vous recommanderons des films similaires !
         </p>
              """, unsafe_allow_html=True)
 
-
+st.sidebar.write("---")
 
 # --- AFFICHAGE DE L'AFFICHE DU FILM DANS LA SIDEBAR---
 
@@ -135,7 +152,7 @@ with st.container():
             font-family: 'Playfair Display', serif;
             font-size: 22px
         ">
-        Sélectionnez le réalisateur que vous aimez :
+        Sélectionnez un réalisateur que vous aimez :
         </span>
         """, unsafe_allow_html=True)
 # Filtre par réalisateur
@@ -157,7 +174,7 @@ with st.container():
             font-family: 'Playfair Display', serif;
             font-size: 22px
         ">
-        Sélectionnez l'acteur principal que vous aimez :
+        Sélectionnez l'acteur principal :
         </span>
         """, unsafe_allow_html=True)
 
@@ -308,7 +325,7 @@ if genres_choisis:
 
 # --- AFFICHAGE DES RESULTATS DE LA RECHERCHE---
 
-films = df_filtre.to_dict(orient="records")  # max 20 films
+films = df_filtre.to_dict(orient="records")
 
 # Page principale : grille de films
 if st.session_state.selected_film is None:

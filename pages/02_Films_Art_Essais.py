@@ -29,7 +29,7 @@ encoded = base64.b64encode(img_bytes).decode()
 st.set_page_config(
     page_title="Cinéma EDEN",
     layout="wide",
-    initial_sidebar_state="expanded"  
+    initial_sidebar_state="expanded" 
 )
 
 

@@ -70,7 +70,7 @@ st.markdown(f"""
 st.set_page_config(
     page_title="EDEN - Recommandation de films",
     layout="wide",
-    initial_sidebar_state="auto",
+    initial_sidebar_state="expanded",
 
 )
 
@@ -370,7 +370,7 @@ if st.session_state.selected_film is None:
 else:
     film = st.session_state.selected_film
     st.header(film["title"])
-
+    
     # Affiche du film
     poster_path = film.get("poster_path")
     if poster_path:

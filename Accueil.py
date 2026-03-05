@@ -28,7 +28,7 @@ df_final = pd.read_csv("df_final_art_acteur.csv", sep=";")
 st.set_page_config(
     page_title="Cinéma EDEN",
     layout="wide",
-    initial_sidebar_state="expanded"  
+    initial_sidebar_state= "expanded"  
 )
 
 # --- Image de fond ---

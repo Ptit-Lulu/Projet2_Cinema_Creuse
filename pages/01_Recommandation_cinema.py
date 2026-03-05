@@ -325,9 +325,8 @@ if genres_choisis:
     ]
 
 
-films = df_filtre
-films = films.reset_index()  # ajoute une colonne "index" avec l'ID réel du film dans df_final
-films_records = films.to_dict(orient="records")
+# On ajoute l'index réel du DataFrame pour pouvoir retrouver le film dans df_final
+films_records = df_filtre.reset_index().to_dict(orient="records")
 
 # Page principale : grille de films
 if st.session_state.selected_film is None:
@@ -340,13 +339,13 @@ if st.session_state.selected_film is None:
             cols = st.columns(n_cols)
             for j, film in enumerate(films_records[i:i+n_cols]):
                 with cols[j]:
-
-                    # bouton cliquable stocke TOUT le film dans session_state
+                    
+                    # bouton cliquable stocke le dict du film dans session_state
                     if st.button(film["title"], key=f"btn_{i+j}", width=200):
-                        st.session_state.selected_film = film
+                        st.session_state.selected_film = film  # film est un dict issu de films_records
 
                     poster_path = film.get("poster_path")
-                    if poster_path:
+                    if poster_path and poster_path not in ["", "None", 0]:
                         st.image(poster_path, width=200)
                     st.caption(f"Réalisateur : {film['primaryName']} ({film['startYear']})", width=200, text_alignment="center")
 
@@ -354,15 +353,37 @@ if st.session_state.selected_film is None:
 else:
     film = st.session_state.selected_film
     st.header(film["title"])
+
+    # Affiche du film
     poster_path = film.get("poster_path")
     if poster_path:
         st.image(poster_path, width=300)
     else:
         st.image("Image_non_disponible.jpg", width=300)
 
-    
-    # Ici tu peux mettre toutes les infos personnalisées
-    st.write("Résumé, acteurs, notes, etc...")
+    st.subheader("Films recommandés 🎬")
+
+   # film["index"] correspond à l'index original dans df_final grâce au reset_index() plus haut
+    film_id = film.get("index", None)
+    if film_id is not None:
+        recommandations = recommander_films_par_id(
+        film_id,
+        knn,
+        X_features,
+        df_final
+    )
+    else:
+        recommandations = []  # sécurité au cas où
+
+    cols = st.columns(5)
+    for i, reco in enumerate(recommandations):
+        with cols[i]:
+            st.write(reco["title"])
+            if reco["poster_path"]:
+                st.image(reco["poster_path"], width=150)
+            else:
+                st.image("Image_non_disponible.jpg", width=150)
+            st.caption(f"{reco['primaryName']} ({reco['startYear']})")
 
     if st.button("Retour aux films"):
         st.session_state.selected_film = None

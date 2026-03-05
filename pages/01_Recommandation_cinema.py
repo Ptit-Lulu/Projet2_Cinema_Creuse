@@ -15,6 +15,25 @@ import plotly.express as px
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+import joblib
+import numpy as np
+
+@st.cache_resource
+def load_all():
+    knn = joblib.load("knn_model.joblib")          # Le modèle NearestNeighbors
+    pipeline = joblib.load("pipeline.joblib")  # Pour transformer les données
+    X_features = joblib.load("X_features.joblib")  # Matrice déjà transformée
+    return knn, pipeline, X_features
+
+knn, pipeline, X_features = load_all()
+
+def recommander_films_par_id(film_id, knn, X_features, df, n=5):
+    vecteur = X_features[film_id].reshape(1, -1)
+    distances, indices = knn.kneighbors(vecteur, n_neighbors=n+1)
+    indices = indices[0][1:]
+
+    resultats = df.iloc[indices][["title", "poster_path", "primaryName", "startYear"]]
+    return resultats.to_dict(orient="records")
 
 
 
@@ -323,27 +342,27 @@ if genres_choisis:
     ]
 
 
-# --- AFFICHAGE DES RESULTATS DE LA RECHERCHE---
-
-films = df_filtre.to_dict(orient="records")
+# On ajoute l'index réel du DataFrame pour pouvoir retrouver le film dans df_final
+films_records = df_filtre.reset_index().to_dict(orient="records")
 
 # Page principale : grille de films
 if st.session_state.selected_film is None:
 
-    if not films:
+    if not films_records:
         st.write("Aucun film trouvé pour cette plage d'années.")
     else:
         n_cols = 5
-        for i in range(0, len(films), n_cols):
+        for i in range(0, len(films_records), n_cols):
             cols = st.columns(n_cols)
-            for j, film in enumerate(films[i:i+n_cols]):
+            for j, film in enumerate(films_records[i:i+n_cols]):
                 with cols[j]:
-                    # On transforme l'image en bouton cliquable
+                    
+                    # bouton cliquable stocke le dict du film dans session_state
                     if st.button(film["title"], key=f"btn_{i+j}", width=200):
-                        st.session_state.selected_film = film
+                        st.session_state.selected_film = film  # film est un dict issu de films_records
 
                     poster_path = film.get("poster_path")
-                    if poster_path:
+                    if poster_path and poster_path not in ["", "None", 0]:
                         st.image(poster_path, width=200)
                     st.caption(f"Réalisateur : {film['primaryName']} ({film['startYear']})", width=200, text_alignment="center")
 
@@ -351,14 +370,37 @@ if st.session_state.selected_film is None:
 else:
     film = st.session_state.selected_film
     st.header(film["title"])
+
+    # Affiche du film
     poster_path = film.get("poster_path")
     if poster_path:
         st.image(poster_path, width=300)
     else:
         st.image("Image_non_disponible.jpg", width=300)
-    
-    # Ici tu peux mettre toutes les infos personnalisées
-    st.write("Résumé, acteurs, notes, etc...")
+
+    st.subheader("Films recommandés 🎬")
+
+   # film["index"] correspond à l'index original dans df_final grâce au reset_index() plus haut
+    film_id = film.get("index", None)
+    if film_id is not None:
+        recommandations = recommander_films_par_id(
+        film_id,
+        knn,
+        X_features,
+        df_final
+    )
+    else:
+        recommandations = []  # sécurité au cas où
+
+    cols = st.columns(5)
+    for i, reco in enumerate(recommandations):
+        with cols[i]:
+            st.write(reco["title"])
+            if reco["poster_path"]:
+                st.image(reco["poster_path"], width=150)
+            else:
+                st.image("Image_non_disponible.jpg", width=150)
+            st.caption(f"{reco['primaryName']} ({reco['startYear']})")
 
     if st.button("Retour aux films"):
         st.session_state.selected_film = None

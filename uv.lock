@@ -1234,7 +1234,6 @@ dependencies = [
     { name = "nltk" },
     { name = "notebook" },
     { name = "numpy" },
-    { name = "pandas" },
     { name = "plotly-express" },
     { name = "scikit-learn" },
     { name = "seaborn" },

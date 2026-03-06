@@ -16,7 +16,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import base64
 
-df_final = pd.read_csv("df_final_art_acteur.csv", sep =";")
+df_final = pd.read_csv("df_final_art_acteur_traduit.csv")
 
 #--- CONFIGURATION DE LA PAGE --- 
 st.set_page_config(
@@ -25,50 +25,7 @@ st.set_page_config(
     initial_sidebar_state="auto",
 
 )
-toggle_html = """
-<div id="custom-toggle" style="
-    position:fixed;
-    top:20px;
-    left:20px;
-    z-index:9999;
-    cursor:pointer;
-    font-size:26px;
-    background:white;
-    padding:4px 8px;
-    border-radius:4px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-">
-    ⮜
-</div>
 
-<script>
-const toggle = document.getElementById('custom-toggle');
-toggle.onclick = function() {
-    const sidebar = document.querySelector('section[data-testid="stSidebar"]');
-    
-    // Ouvert ou fermé
-    if(sidebar.style.display === 'none' || sidebar.style.display === '') {
-        sidebar.style.display = 'block'; 
-        toggle.textContent = '⮜';  // ouvert → flèche gauche
-    } else {
-        sidebar.style.display = 'none'; 
-        toggle.textContent = '⮞';  // fermé → flèche droite
-    }
-}
-
-// Au chargement, adapter l'icône selon l'état initial
-window.onload = function(){
-    const sidebar = document.querySelector('section[data-testid="stSidebar"]');
-    if(sidebar.style.display === 'none' || sidebar.style.display === ''){
-        toggle.textContent = '⮞';
-    } else {
-        toggle.textContent = '⮜';
-    }
-}
-</script>
-"""
-
-components.html(toggle_html, height=50)
 
 #--- PERSONALISATION DE LA SIDEBAR---
 st.markdown("""

@@ -47,8 +47,23 @@ with open("Fond_ecran_art_essai.png", "rb") as f:
     img_bytes = f.read()
 encoded = base64.b64encode(img_bytes).decode()
 
+
+#**********************************************
+#--- MISE EN PAGE---
+#**********************************************
+
+# --- Config page  ---
+st.set_page_config(
+    page_title="Cinéma EDEN",
+    layout="wide",
+    initial_sidebar_state="expanded" 
+)
+
+
+ #--- CSS ---
 st.markdown(f"""
-<style>
+<style> @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lora&display=swap');
+/* Fond principal avec filtre semi-transparent */
 [data-testid="stAppViewContainer"] {{
     background:
         linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)),

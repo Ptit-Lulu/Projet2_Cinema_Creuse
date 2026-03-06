@@ -6,6 +6,34 @@ import plotly.io as pio
 import streamlit.components.v1 as components
 import math
 
+st.markdown("""
+<style>
+[data-testid="stSidebar"] * {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 20px !important;
+}
+
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 20px !important;
+    font-weight: normal;
+}
+
+[data-testid="stSidebar"] select,
+[data-testid="stSidebar"] button,
+[data-testid="stSidebar"] .st-bq {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 20px !important;
+}
+
+button.stButton>button {
+    font-size: 20px !important;   /* harmoniser taille des boutons */
+}
+</style>
+""", unsafe_allow_html=True)
+
 # =====================================================
 # DEBUT
 # =====================================================

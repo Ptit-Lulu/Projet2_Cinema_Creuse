@@ -62,8 +62,7 @@ st.set_page_config(
 
  #--- CSS ---
 st.markdown(f"""
-<style> @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lora&display=swap');
-/* Fond principal avec filtre semi-transparent */
+<style>
 [data-testid="stAppViewContainer"] {{
     background:
         linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)),
@@ -159,7 +158,7 @@ st.markdown("""
              <p 
             style="font-size: 25px;
             font-family: 'Playfair Display', serif;">
-        Recherche par caractéristiques<br>
+        Dites nous ce que vos clients aiment et nous vous recommanderons des films à programmer !<br>
         </p>
              """, unsafe_allow_html=True)
 

@@ -88,16 +88,7 @@ st.markdown("""
 
 
 st.title("Section Grand Public")
-st.markdown("""
-<h1 style="
-    font-family: 'Playfair Display', serif;
-    font-weight: 700;
-    font-size: 48px;
-    margin-bottom: 20px;
-">
-Pas d'idée de film ?
-</h1>
-""", unsafe_allow_html=True)
+
 
 st.markdown("""
              <p 
@@ -115,8 +106,8 @@ st.sidebar.markdown("""
              <p 
             style="font-size: 18px; 
             font-family: 'Playfair Display', serif;">
-        Saisissez un film particulièrement apprécié par vos clients, 
-                    nous vous recommanderons des films similaires !
+        Entrez le titre du film que vous souhaitez.<br>
+Notre algorithme vous sélectionnera des films similaires !
         </p>
              """, unsafe_allow_html=True)
 
@@ -335,6 +326,7 @@ if genres_choisis:
             axis=1
         )
     ]
+
 
 
 # On ajoute l'index réel du DataFrame pour pouvoir retrouver le film dans df_final

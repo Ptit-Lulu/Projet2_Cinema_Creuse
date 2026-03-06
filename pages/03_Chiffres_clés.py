@@ -329,7 +329,7 @@ st.markdown("# Indicateurs clés ")
 # =====================================================
 # DATA
 # =====================================================
-df_final = pd.read_csv("df_final_art_acteur.csv", sep=";")
+df_final = pd.read_csv("df_final_art_acteur_traduit.csv")
 df_final["startYear"] = pd.to_numeric(df_final["startYear"], errors="coerce")
 
 genres = df_final["genre_1"].dropna().astype(str).sort_values().unique().tolist()

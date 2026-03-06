@@ -69,7 +69,7 @@ films_recents = df_final[df_final["startYear"] >= 2024]
 film_aleatoire = films_recents.sample(1).iloc[0]
 
 # Affichage dans la sidebar
-st.sidebar.markdown("## Sortie récente 🎬")
+st.sidebar.markdown("## **Sortie récente 🎬**")
 
 if film_aleatoire["poster_path"] not in ["", "None", None, 0]:
     st.sidebar.image(film_aleatoire["poster_path"], width=200)

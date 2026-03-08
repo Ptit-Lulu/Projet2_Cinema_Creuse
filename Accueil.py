@@ -15,9 +15,9 @@ import streamlit.components.v1 as components
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import base64
+import random
 
-# --- Chargement des données ---
-df_final = pd.read_csv("df_final_art_acteur.csv", sep=";")
+df_final = pd.read_csv("df_final_art_acteur_traduit.csv")
 
 
 #**********************************************
@@ -31,15 +31,61 @@ st.set_page_config(
     initial_sidebar_state= "expanded"  
 )
 
-# --- Image de fond ---
+
+
+#--- PERSONALISATION DE LA SIDEBAR---
+st.markdown("""
+<style>
+[data-testid="stSidebar"] * {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 20px !important;
+}
+
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 20px !important;
+    font-weight: normal;
+}
+
+[data-testid="stSidebar"] select,
+[data-testid="stSidebar"] button,
+[data-testid="stSidebar"] .st-bq {
+    font-family: 'Playfair Display', serif !important;
+    font-size: 20px !important;
+}
+
+button.stButton>button {
+    font-size: 20px !important;   /* harmoniser taille des boutons */
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Filtrer les films récents (par exemple sorties depuis 2020)
+films_recents = df_final[df_final["startYear"] >= 2024]
+
+# Choisir un film aléatoire
+film_aleatoire = films_recents.sample(1).iloc[0]
+
+# Affichage dans la sidebar
+st.sidebar.markdown("## **Sortie récente 🎬**")
+
+if film_aleatoire["poster_path"] not in ["", "None", None, 0]:
+    st.sidebar.image(film_aleatoire["poster_path"], width=200)
+
+st.sidebar.markdown(f"**{film_aleatoire['title']} ({film_aleatoire['startYear']})**")
+# Réalisateur
+st.sidebar.markdown(f"Réalisateur : {film_aleatoire['primaryName']}")
+
+# --- LIRE ET ENCODER L'IMAGE DE FOND ---
 with open("photo_eden_noir_blanc.png", "rb") as f:
     img_bytes = f.read()
 encoded_bg = base64.b64encode(img_bytes).decode()
 
 # --- CSS ---
 st.markdown(f"""
-<style> @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Lora&display=swap');
-/* Fond principal avec filtre semi-transparent */
+<style>
 [data-testid="stAppViewContainer"] {{
     background:
         linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.8)),
@@ -117,8 +163,8 @@ st.markdown("""
 <div class="custom-block">
     <h1 style="font-size:70px;">Bienvenue au Cinéma EDEN !</h1>
     <p style="font-size:22px; font-style: italic; text-align: center;">
-        Découvrez le film parfait pour chaque instant !<br>
-        Vos soirées cinéma n’ont jamais été aussi faciles à choisir !
+        Trouvez les films qui sauront attirer votre audience.<br>
+        Analysez les similarités avec les films ayant déjà rencontré du succès et planifiez votre prochaine programmation en toute confiance.
     </p>
 </div>
 """, unsafe_allow_html=True)
@@ -127,60 +173,47 @@ st.write("\n")  # Espacement entre les blocs
 st.divider()  # Ligne de séparation entre les blocs
 
 
-# --- Trois blocs plus fins, empilés verticalement ---
-# Bloc 1 : Recommandations
-st.markdown("""
-<div class="custom-block-small">
-    <h2 style="margin:0; padding:0; line-height:1.2;">🎬 Recommandations</h2>
-</div>
-""", unsafe_allow_html=True)
+# --- Trois blocs en colonnes ---
+col1, col2, col3 = st.columns(3, gap="large")  # crée 3 colonnes avec un espacement large
 
-st.write("\n")  # Espacement
-st.write("Cette section présente un modèle de recommandation permettant de suggérer des films similaires à partir d’un film sélectionné par l’utilisateur. Le système repose sur l’analyse de caractéristiques communes entre les films (genres, thèmes, similarités entre œuvres, etc.). L’objectif est d’illustrer l’utilisation de méthodes de recommandation dans le domaine du cinéma afin d’améliorer la découverte de contenus et de proposer une expérience personnalisée.")
+# --- Colonne 1 : Recommandations Grand Public ---
+with col1:
+    st.markdown("""
+    <div class="custom-block-small" style="height: 250px; display:flex; flex-direction:column; justify-content:space-between;">
+        <h2 style="margin:0; padding:0; line-height:1.2; text-align:center;">🎬 Recommandations</h2>
+        <p style="font-size:14px; text-align:center; flex-grow:1; margin-top:10px;">
+             Découvrez des films similaires à votre sélection, recommandés selon leurs genres, thèmes, acteurs et autres caractéristiques avancées. 
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    if st.button("Découvrir les recommandations Grand Public générées ici", key="btn_reco_col"):
+        st.switch_page("pages/01_Films_Grand_Public.py")
 
-st.write("\n")  # Espacement
+# --- Colonne 2 : Art & Essai ---
+with col2:
+    st.markdown("""
+    <div class="custom-block-small" style="height: 250px; display:flex; flex-direction:column; justify-content:space-between;">
+        <h2 style="margin:0; padding:0; line-height:1.2; text-align:center;">🎨 Art & Essai</h2>
+        <p style="font-size:14px; text-align:center; flex-grow:1; margin-top:10px;">
+            Explorez les films Art & Essai et utilisez la puissance de notre modèle pour cibler uniquement des œuvres labellisées. 
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    if st.button("Voir les recommandations de films Art & Essai générées ici", key="btn_art_col"):
+        st.switch_page("pages/02_Films_Art_Essais.py")
 
-if st.button("Découvrir les recommandations", key="btn_reco"):
-    st.switch_page("pages/01_Recommandation_cinema.py")
-
-st.divider()  # Ligne de séparation entre les blocs
-
-
-#bloc 2 : Art & Essai
-st.markdown("""
-<div class="custom-block-small">
-    <h2 style="margin:0; padding:0; line-height:1.2;"> 🎨 Art & Essai</h2>
-</div>
-""", unsafe_allow_html=True)
-
-st.write("\n")  # Espacement 
-st.write("Cette partie est consacrée à l’exploration des films classés « Art et Essai ». Elle permet d’identifier certaines caractéristiques propres à ce type de production cinématographique et d’observer les tendances associées. L’analyse met en évidence les spécificités de ces œuvres, souvent reconnues pour leur dimension artistique, culturelle ou expérimentale.")
-st.write("\n")  # Espacement 
-
-if st.button("Voir Art & Essai", key="btn_art"):
-    st.switch_page("pages\\02_Films_Art_Essais.py")
-
-st.divider()  # Ligne de séparation entre les blocs
-
-
-#Bloc 3 : Chiffres clés
-st.markdown("""
-<div class="custom-block-small">
-    <h2 style="margin:0; padding:0; line-height:1.2;"> 📊 Chiffres clés</h2>
-</div>
-""", unsafe_allow_html=True)
-
-st.write("\n")  # Espacement 
-
-st.write("Cette section présente un modèle de recommandation permettant de suggérer des films similaires à partir d’un film sélectionné par l’utilisateur. Le système repose sur l’analyse de caractéristiques communes entre les films (genres, thèmes, similarités entre œuvres, etc.). L’objectif est d’illustrer l’utilisation de méthodes de recommandation dans le domaine du cinéma afin d’améliorer la découverte de contenus et de proposer une expérience personnalisée.")
-
-st.write("\n")  # Espacement 
-
-if st.button("Voir les indicateurs", key="btn_ind"):
-    st.switch_page("pages\\03_Chiffres clés.py")
-    
-
-st.divider()  # Ligne de séparation entre les blocs
+# --- Colonne 3 : Chiffres clés ---
+with col3:
+    st.markdown("""
+    <div class="custom-block-small" style="height: 250px; display:flex; flex-direction:column; justify-content:space-between;">
+        <h2 style="margin:0; padding:0; line-height:1.2; text-align:center;">📊 Chiffres clés</h2>
+        <p style="font-size:14px; text-align:center; flex-grow:1; margin-top:10px;">
+            Consultez les indicateurs clés pour analyser le succès des films et tendances du cinéma.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    if st.button("Consulter les chiffres et indicateurs clés des films", key="btn_ind_col"):
+        st.switch_page("pages/03_Chiffres_clés.py")
 
 
 

@@ -65,7 +65,7 @@ st.markdown(f"""
 <style>
 [data-testid="stAppViewContainer"] {{
     background:
-        linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)),
+        linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.8)),
         url("data:image/png;base64,{encoded}");
     background-size: cover;
     background-position: center;
@@ -339,7 +339,7 @@ else:
         else: st.image("Image_non_disponible.jpg", width=300)
     with col2:
         tagline = film.get("tagline_fr")
-        if tagline and tagline not in ["", "None"]:
+        if tagline != "Indisponible":
             st.markdown(f"### _{tagline}_")
         overview = film.get("overview_fr")
         st.markdown("#### Synopsis")
@@ -352,7 +352,8 @@ else:
         with col_r:
             st.markdown("#### Réalisateur")
             st.write(film.get("primaryName", "Non renseigné"))
-
+            st.markdown("#### Durée")
+            st.write(f"{film.get('runtimeMinutes', 'Non renseigné')} minutes")
         with col_g:
             st.markdown("#### Genres")
             genres = [film.get(f"genre_{i}", "") for i in range(1,4)]

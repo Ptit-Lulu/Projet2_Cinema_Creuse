@@ -186,7 +186,7 @@ with col1:
         </p>
     </div>
     """, unsafe_allow_html=True)
-    if st.button("Découvrir les recommandations Grand Public générées ici", key="btn_reco_col"):
+    if st.button("Découvrir les recommandations Grand Public générées ici", key="btn_reco_col", width="stretch"):
         st.switch_page("pages/01_Films_Grand_Public.py")
 
 # --- Colonne 2 : Art & Essai ---
@@ -199,7 +199,7 @@ with col2:
         </p>
     </div>
     """, unsafe_allow_html=True)
-    if st.button("Voir les recommandations de films Art & Essai générées ici", key="btn_art_col"):
+    if st.button("Voir les recommandations de films Art & Essai générées ici", key="btn_art_col", width="stretch"):
         st.switch_page("pages/02_Films_Art_Essais.py")
 
 # --- Colonne 3 : Chiffres clés ---
@@ -207,12 +207,12 @@ with col3:
     st.markdown("""
     <div class="custom-block-small" style="height: 250px; display:flex; flex-direction:column; justify-content:space-between;">
         <h2 style="margin:0; padding:0; line-height:1.2; text-align:center;">📊 Chiffres clés</h2>
-        <p style="font-size:14px; text-align:center; flex-grow:1; margin-top:10px;">
+        <p style="font-size:14px; text-align:center; flex-grow:1; margin-top:10px;align-items: center">
             Consultez les indicateurs clés pour analyser le succès des films et tendances du cinéma.
         </p>
     </div>
     """, unsafe_allow_html=True)
-    if st.button("Consulter les chiffres et indicateurs clés des films", key="btn_ind_col"):
+    if st.button("Consulter les chiffres et indicateurs clés des films", key="btn_ind_col", width="stretch"):
         st.switch_page("pages/03_Chiffres_clés.py")
 
 

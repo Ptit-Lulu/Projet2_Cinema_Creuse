@@ -65,7 +65,7 @@ st.markdown(f"""
 <style>
 [data-testid="stAppViewContainer"] {{
     background:
-        linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)),
+        linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.8)),
         url("data:image/png;base64,{encoded}");
     background-size: cover;
     background-position: center;

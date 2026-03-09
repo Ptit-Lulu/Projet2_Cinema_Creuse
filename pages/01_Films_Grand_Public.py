@@ -374,7 +374,7 @@ else:
 
     # Tagline
         tagline = film.get("tagline_fr")
-        if tagline and tagline not in ["", "None"]:
+        if tagline != "Indisponible":
             st.markdown(f"### _{tagline}_")
 
     # Synopsis
@@ -391,6 +391,9 @@ else:
         with col_r:
             st.markdown("#### Réalisateur")
             st.write(film.get("primaryName", "Non renseigné"))
+
+            st.markdown("#### Durée")
+            st.write(f"{film.get('runtimeMinutes', 'Non renseigné')} minutes")
 
         with col_g:
             st.markdown("#### Genres")
